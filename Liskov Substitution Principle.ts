@@ -1,58 +1,60 @@
-
-// Start with a base interface Bird, defining only common behavior.
-
-
-// base interface
-interface Bird {
-  eat(): void;
+// Base interface for Payment
+interface Payment {
+  processPayment(amount: number): void;
 }
 
-// Step 2: Create Derived Classes
-// For flying birds, define a specific interface FlyingBird that extends Bird.
-// Implement both FlyingBird and Bird appropriately.
-
-// Derived interface
-// Flying birds
-interface FlyingBird extends Bird {
-  fly(): void;
+// Interface for card payments
+interface CardPayment extends Payment {
+  validateCardDetails(cardNumber: string): void;
 }
 
-class Sparrow implements FlyingBird {
-  eat(): void {
-    console.log("Sparrow is eating seeds.");
+// Interface for UPI payments
+interface UpiPayment extends Payment {
+  validateUpiId(upiId: string): void;
+}
+
+// Implementation for card payment
+class CreditCardPayment implements CardPayment {
+  validateCardDetails(cardNumber: string): void {
+    console.log(`Validating card number: ${cardNumber}`);
   }
-  fly(): void {
-    console.log("Sparrow is flying high!");
+
+  processPayment(amount: number): void {
+    console.log(`Processing card payment of ₹${amount}`);
   }
 }
 
-// Non-flying birds
-class Penguin implements Bird {
-  eat(): void {
-    console.log("Penguin is eating fish.");
+// Implementation for UPI payment
+class UpiPaymentSystem implements UpiPayment {
+  validateUpiId(upiId: string): void {
+    console.log(`Validating UPI ID: ${upiId}`);
+  }
+
+  processPayment(amount: number): void {
+    console.log(`Processing UPI payment of ₹${amount}`);
   }
 }
 
-// Step 3: Using the LSP
-// You can now substitute any Bird object with its subtype (Sparrow or Penguin) without breaking the program. 
-// Flying-specific behavior (fly) is isolated to the FlyingBird interface.
-
-function makeBirdEat(bird: Bird): void {
-  bird.eat();
+// Common functions to handle payments
+function handleCardPayment(cardPayment: CardPayment, cardNumber: string, amount: number): void {
+  cardPayment.validateCardDetails(cardNumber);
+  cardPayment.processPayment(amount);
 }
 
-function makeBirdFly(flyingBird: FlyingBird): void {
-  flyingBird.fly();
+function handleUpiPayment(upiPayment: UpiPayment, upiId: string, amount: number): void {
+  upiPayment.validateUpiId(upiId);
+  upiPayment.processPayment(amount);
 }
 
-// Substitution examples
-const sparrow = new Sparrow();
-makeBirdEat(sparrow); // Output: Sparrow is eating seeds.
-makeBirdFly(sparrow); // Output: Sparrow is flying high!
+// Usage examples
+const cardPayment = new CreditCardPayment();
+handleCardPayment(cardPayment, "1234-5678-9012-3456", 500); 
+// Output:
+// Validating card number: 1234-5678-9012-3456
+// Processing card payment of ₹500
 
-const penguin = new Penguin();
-makeBirdEat(penguin); // Output: Penguin is eating fish.
-// makeBirdFly(penguin); // Error: penguin does not implement fly()
-
-
-
+const upiPayment = new UpiPaymentSystem();
+handleUpiPayment(upiPayment, "user@upi", 250); 
+// Output:
+// Validating UPI ID: user@upi
+// Processing UPI payment of ₹250
